@@ -15,10 +15,10 @@ So, we can probably say that this should work:
 > $a^B=e^{B\ln{a}}=\sum_{k=1}^{\infty} \frac{1}{k!} (B \ln{a})^k$, where $B$ is a $n \times n$ matrix.
 
 ## How to use
-Use your favorite compiler to compile the source code and run the program via your local cmd or shell providing input file name like this:
+Use your favorite compiler to compile the source code or download an executable from [releases](https://github.com/sashokdimasik/pow-of-matrix/releases). Run the program via your local cmd or shell and provide an input file. Example for latest Windows release:
 
 ```cmd
-main input.txt
+pom_win64 input.txt
 ```
 
 Input file must contain the base, matrix size, precision, max amount of performed calculations and matrix. Input file example:
