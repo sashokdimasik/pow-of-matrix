@@ -6,13 +6,16 @@ So I decided to write a little program for that.
 ## Math
 Math algorithm for this is simple:
 $e$ to the power of matrix can be defined by substituting the matrix into the Taylor series:
-> $e^A=\sum_{k=1}^{\infty} \frac{1}{k!} A^k$, where $A$ is a $n \times n$ matrix.
+
+$e^A=\sum_{k=1}^{\infty} \frac{1}{k!} A^k$, where $A$ is a $n \times n$ matrix.
 
 Casual power operation can be written like this:
-> $a^b=e^{b \ln{a}}$
+
+$a^b=e^{b \ln{a}}$
 
 So, we can probably say that this should work:
-> $a^B=e^{B\ln{a}}=\sum_{k=1}^{\infty} \frac{1}{k!} (B \ln{a})^k$, where $B$ is a $n \times n$ matrix.
+
+$a^B=e^{B\ln{a}}=\sum_{k=1}^{\infty} \frac{1}{k!} (B \ln{a})^k$, where $B$ is a $n \times n$ matrix.
 
 ## How to use
 Use your favorite compiler to compile the source code or download an executable from [releases](https://github.com/sashokdimasik/pow-of-matrix/releases). Run the program via your local cmd or shell and provide an input file. Example for latest Windows release:
