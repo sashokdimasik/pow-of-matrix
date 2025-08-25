@@ -54,7 +54,7 @@ So we have here a classic $e$ base and following matrix as a power:
 
 $$\begin{bmatrix}
 \pi i & 1 \\\
-0       & \frac{\pi}{2}
+0       & \frac{\pi i}{2}
 \end{bmatrix}$$
 
 Program will print this in your terminal:
