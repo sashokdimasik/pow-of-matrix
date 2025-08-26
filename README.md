@@ -27,7 +27,7 @@ Use your favorite compiler to compile the source code or download an executable 
 You can provide I/O files as arguments upon launching program via command line. Example for latest Windows release:
 
 ```
-pom-win-2.0.0-64 tests/test_-e2.txt output.txt
+pom-win-2.0.1-64 tests/test_-e2.txt output.txt
 ```
 
 Also you can provide file names manually when program asks you for them.
