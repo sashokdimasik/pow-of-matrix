@@ -1,5 +1,5 @@
 # Power of matrix
-So drunk me was watching 3Blue1Brown video about [matrix exponential](https://youtu.be/O85OWBJ2ayo) and thought to myself: "Damn, you can probably perform such exponentiation with bases other than $e$ using natural logarithm properties".
+So drunk me was watching [3Blue1Brown video about matrix exponential](https://youtu.be/O85OWBJ2ayo) and thought to myself: "Damn, you can probably perform such exponentiation with bases other than $e$ using natural logarithm properties".
 
 So I decided to write a little program for that.
 
