@@ -82,7 +82,7 @@ Looks very belivable. Assuming "dimasik.txt" is indeed what you called your outp
 (     0.000000,     0.000000) (     0.000000,     1.000000) 
 ```
 
-### tests/test_e-2.txt
+### tests/test_-e2.txt
 
 Let's take $-e^2$ as a base this time. Input file:
 
