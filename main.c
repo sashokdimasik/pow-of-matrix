@@ -22,16 +22,14 @@ typedef struct Configuration {
 } Configuration;
 
 Complex complex_sum (Complex a, Complex b) {
-    Complex result = {a.real + b.real, a.imag + b.imag};
-    return result;
+    return (Complex) {a.real + b.real, a.imag + b.imag};
 }
 
 Complex complex_mult (Complex a, Complex b) {
-    Complex result = {a.real * b.real - a.imag * b.imag, a.real * b.imag + a.imag * b.real};
-    return result;
+    return (Complex) {a.real * b.real - a.imag * b.imag, a.real * b.imag + a.imag * b.real};;
 }
 
-Complex complex_div_int (Complex a, int b) { // We don't check 0 in denominator, because we'll never have 0
+Complex complex_div_int (Complex a, int b) { // We don't check for 0 in denominator, because we'll never have 0
     Complex result;
     
     result.real = a.real / b;
@@ -51,7 +49,7 @@ double complex_magnitude (Complex number) {
 
 Complex complex_log (Complex number) {
     Complex result;
-
+    
     if (number.imag == 0 && number.real > 0) {
         result.real = log(number.real);
         result.imag = 0;
@@ -59,7 +57,7 @@ Complex complex_log (Complex number) {
         result.real = log(complex_magnitude(number));
         result.imag = atan2(number.imag, number.real);
     }
-
+    
     return result;
 }
 
@@ -74,7 +72,7 @@ void matrix_alloc (Matrix *matrix, int size) {
 void matrix_free (Matrix *matrix) {
     for (int i = 0; i < matrix->size; i++)
         free(matrix->element[i]);
-
+    
     free(matrix->element);
 }
 
@@ -82,8 +80,8 @@ int input_from_file (Configuration *config, FILE *fin) {
     if (fscanf(fin, "%lf,%lf",
                &(config->base.real),
                &(config->base.imag)) != 2) {
-	printf("[ERROR] Base must contain real and imaginary parts separated by comma!");
-	return -1;
+        printf("[ERROR] Base must contain real and imaginary parts separated by comma!");
+        return -1;
     }
     
     if (config->base.real == 0 && config->base.imag == 0) {
@@ -95,58 +93,58 @@ int input_from_file (Configuration *config, FILE *fin) {
                &(config->precision),
                &(config->iterations_limit),
                &(config->matrix_size)) != 3) {
-        printf("[ERROR] Please provide precision, iterations limit, power matrix' size and power matrix!\n[...] Before each parameter write minus sign \"-\".");
+        printf("[ERROR] Please provide precision, iterations limit, power matrix' size and power matrix!\n[.....] Before each of the first three parameters write minus sign \"-\".");
         return -1;
     }
-
+    
     if (config->iterations_limit < 3) {
         printf("[ERROR] Iterations limit must be greater than \"3\"!");
         return -1;
     }
-
+    
     if (config->matrix_size < 1) {
         printf("[ERROR] Matrix size can't be less than \"1\"!");
         return -1;
     }
-
+    
     matrix_alloc(&(config->power), config->matrix_size);
-
+    
     for (int i = 0; i < config->matrix_size; i++) {
         for (int j = 0; j < config->matrix_size; j++) {
-	    int read_elements_count = fscanf(fin, "%lf,%lf",
-                                         &(config->power.element[i][j].real),
-                                         &(config->power.element[i][j].imag));
-	    
-	    if (read_elements_count < 2) {
-            if (read_elements_count == EOF) {
-                printf("[ERROR] Provided matrix lacks %d elements!",
-                config->matrix_size * (config->matrix_size - i) - j);
-            } else {
-                printf("[ERROR] Error occured while reading power matrix at [row = %d, column =  %d]\n", i + 1, j + 1);
-
-                if (read_elements_count == 1) {
-                    printf("[...] Imaginary part is not provided!\n");
-                } else {
-                    printf("[...] Either the current element [%d, %d] lacks real part, or the previous one [%d, %d] lacks imaginary part!\n", i + 1, j + 1, i + 1 - (j - 1 == -1), (j - 1 == -1) ? config->matrix_size : j);
-                }
-
-                printf("[...] Each element must contain real and imaginary parts separated by comma!\nElements can be separated by space or new line.\n");
-            }
+            int read_elements_count = fscanf(fin, "%lf,%lf",
+                                             &(config->power.element[i][j].real),
+                                             &(config->power.element[i][j].imag));
             
-            matrix_free(&(config->power));
-            return -1;
+            if (read_elements_count < 2) {
+                if (read_elements_count == EOF) {
+                    printf("[ERROR] Provided matrix lacks %d elements!",
+                           config->matrix_size * (config->matrix_size - i) - j);
+                } else {
+                    printf("[ERROR] Error occured while reading power matrix at [row = %d, column =  %d]\n", i + 1, j + 1);
+                    
+                    if (read_elements_count == 1) {
+                        printf("[.....] Imaginary part is not provided!\n");
+                    } else {
+                        printf("[.....] Either the current element [%d, %d] lacks real part, or the previous one [%d, %d] lacks imaginary part!\n", i + 1, j + 1, i + 1 - (j - 1 == -1), (j - 1 == -1) ? config->matrix_size : j);
+                    }
+                    
+                    printf("[.....] Each element must contain real and imaginary parts separated by comma!\nElements can be separated by space or new line.\n");
+                }
+                
+                matrix_free(&(config->power));
+                return -1;
             }
         }
     }
-
+    
     return 0;
 }
 
-void matrix_fill (Matrix *matrix, Complex number) {
+void matrix_fill_double (Matrix *matrix, double number) {
     for (int i = 0; i < matrix->size; i++)
         for (int j = 0; j < matrix->size; j++) {
-            matrix->element[i][j].real = number.real;
-            matrix->element[i][j].imag = number.imag;
+            matrix->element[i][j].real = number;
+            matrix->element[i][j].imag = 0;
         }
 }
 
@@ -155,11 +153,12 @@ void matrix_copy (Matrix *dest, Matrix *src) {
         memcpy(dest->element[i], src->element[i], sizeof(Complex) * dest->size);
 }
 
-void number_to_matrix (Complex number, Matrix *matrix) {
-    Complex zero = {0, 0};
-    matrix_fill(matrix, zero);
-    for (int i = 0; i < matrix->size; i++)
-        matrix->element[i][i] = number;
+void double_to_matrix (double number, Matrix *matrix) {
+    matrix_fill_double(matrix, 0);
+    for (int i = 0; i < matrix->size; i++) {
+        matrix->element[i][i].real = number;
+        matrix->element[i][i].imag = 0;
+    }
 }
 
 void matrix_sum (Matrix *a, Matrix *b) {
@@ -182,9 +181,8 @@ void matrix_div_int (Matrix *matrix, int number) {
 
 void matrix_mult_matrix (Matrix *a, Matrix *b) {
     Matrix buff;
-    Complex zero = {0, 0};
     matrix_alloc(&buff, a->size);
-    matrix_fill(&buff, zero);
+    matrix_fill_double(&buff, 0);
     
     for (int i = 0; i < a->size; i++)
         for (int j = 0; j < a->size; j++)
@@ -207,7 +205,7 @@ double matrix_compare (Matrix *a, Matrix *b) {
                 max_difference = difference_real;
             
             if (difference_imag > max_difference)
-                    max_difference = difference_imag;
+                max_difference = difference_imag;
         }
     
     return max_difference;
@@ -216,11 +214,10 @@ double matrix_compare (Matrix *a, Matrix *b) {
 void pow_of_matrix (Matrix *result, Configuration *config) {
     Matrix curr_el;
     Matrix buff;
-    Complex one = {1, 0};
     
     matrix_mult_number(&(config->power), complex_log(config->base));
     
-    number_to_matrix(one, result);
+    double_to_matrix(1, result);
     matrix_sum(result, &(config->power));
     
     matrix_alloc(&curr_el, config->matrix_size);
@@ -269,8 +266,8 @@ void print_matrix (Matrix *matrix) {
             }
             
             printf(") ");
-	}
-	
+        }
+        
         printf("\n");
     }
 }
@@ -292,14 +289,14 @@ void fprint_matrix (FILE *fout, Matrix *matrix) {
             }
             fprintf(fout, ") ");
         }
-	
+        
         fprintf(fout, "\n");
     }
 }
 
 int output_to_file_and_free (char *fout_name, Matrix *matrix) {
     FILE *fout;
-
+    
     if (fout_name == NULL) {
         printf("Enter OUTPUT file name: ");
         fout_name = malloc(256 * sizeof(char));
@@ -314,15 +311,15 @@ int output_to_file_and_free (char *fout_name, Matrix *matrix) {
         free(fout_name);
         return -1;
     }
-
+    
     fprint_matrix(fout, matrix);
     
     matrix_free(matrix);
-
+    
     printf("\nThe result is saved to \"%s\"!", fout_name);
-
+    
     free(fout_name);
-
+    
     return 0;
 }
 
@@ -344,7 +341,7 @@ int main (int argc, char **argv) {
         fin_name = malloc(256 * sizeof(char));
         scanf("%s", fin_name);
     }
-
+    
     fin = fopen(fin_name, "r");
     
     if (fin == NULL) {
@@ -358,7 +355,7 @@ int main (int argc, char **argv) {
         fclose(fin);
         return -1;
     }
-
+    
     fclose(fin);
     
     printf("Base: %lf + %lf * i;\nDesired precision: %lf\nPower matrix:\n",
@@ -369,11 +366,11 @@ int main (int argc, char **argv) {
     printf("\n");
     
     matrix_alloc(&result, config.matrix_size);
-
+    
     pow_of_matrix(&result, &config);
     
     matrix_free(&(config.power));
-
+    
     printf("\nThe result:\n");
     print_matrix(&result);
     
